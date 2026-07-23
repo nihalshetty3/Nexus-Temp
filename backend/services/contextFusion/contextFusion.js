@@ -1,6 +1,7 @@
 import { normalizeEvent } from "./normalizeEvent.js";
 import { plannerAgent } from "./plannerAgent.js";
 import { toolExecutor } from "./toolExecutor.js";
+import { fusionService } from "./fusionService.js";
 
 export async function contextFusion(event) {
 
@@ -11,31 +12,9 @@ export async function contextFusion(event) {
     console.log("Normalized Event:");
     console.log(normalizedEvent);
 
-    // const plan = await plannerAgent(normalizedEvent);
-    const plan = {
-        processable: true,
-        workflow: "purchase_approval",
-        priority: "high",
-        requiredTools: [
-            {
-                tool: "gmail",
-                objective: "Retrieve previous email conversation."
-            },
-            {
-                tool: "google_sheets",
-                objective: "Retrieve IT budget."
-            },
-            {
-                tool: "google_docs",
-                objective: "Retrieve procurement policy."
-            },
-            {
-                tool: "drive",
-                objective: "Retrieve vendor quotation."
-            }
-        ]
-    };
+     const plan = await plannerAgent(normalizedEvent);
     
+
     console.log("\nPlanner Output:");
     console.log(plan);
 
@@ -49,6 +28,15 @@ export async function contextFusion(event) {
 
     console.log("\nRetrieved Context:");
     console.log(retrievedContext);
+
+    const fusedContext = fusionService(
+        normalizedEvent,
+        plan,
+        retrievedContext
+    );
+
+    console.log("\n========== FUSED CONTEXT ==========\n");
+    console.dir(fusedContext, { depth: null });
 
     console.log("\n====================================\n");
 }

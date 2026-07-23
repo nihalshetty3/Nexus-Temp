@@ -1,7 +1,7 @@
-export async function mockDrive(query) {
+export async function mockDrive(objective) {
 
     console.log("\n===== GOOGLE DRIVE MCP =====");
-    console.log("Query:", query);
+    console.log("Objective:", objective);
 
     return {
         fileName: "Dell Monitor Quotation.pdf",

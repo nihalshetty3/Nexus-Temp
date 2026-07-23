@@ -1,7 +1,7 @@
-export async function mockSheets(query){
+export async function mockSheets(objective){
 
     console.log("Google Sheets MCP");
-    console.log("Query:", query);
+    console.log("Objective:", objective);
 
     return {
         department:"IT",

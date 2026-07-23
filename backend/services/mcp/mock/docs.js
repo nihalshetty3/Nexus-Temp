@@ -1,7 +1,7 @@
-export async function mockDocs(query) {
+export async function mockDocs(objective) {
 
     console.log("\n===== GOOGLE DOCS MCP =====");
-    console.log("Query:", query);
+    console.log("Objective:", objective);
 
     return {
         approvalLimit: 1000000,
