@@ -1,11 +1,11 @@
 import express from "express";
-
+import { contextFusion } from "../services/contextFusion/contextFusion.js";
 const router = express.Router();
 
-router.post("/" , (req , res) =>{
+router.post("/" , async (req , res) =>{
     console.log("Sheets Webhook Triggered");
 
-    console.log(req.body);
+    contextFusion (req.body);
 
     res.sendStatus(200);
 });

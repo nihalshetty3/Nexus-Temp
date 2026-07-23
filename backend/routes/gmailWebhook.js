@@ -1,10 +1,11 @@
 import express from "express";
-const router = express.Router();
+import { contextFusion }  from "../services/contextFusion/contextFusion.js";
 
-router.post("/" , (req , res) => {
+const router = express.Router();
+router.post("/" , async (req , res) => {
     console.log("Gmail Webhook Triggered");
 
-    console.log(req.body);
+    await contextFusion(req.body);
 
     res.sendStatus(200);
 });
