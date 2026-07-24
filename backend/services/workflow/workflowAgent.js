@@ -1,28 +1,16 @@
 
 import {executeWorkFlow} from "./workflowExecutor.js";
 
-export async function workflowAgent(decision){
+export async function workflowAgent(llmResponse){
         
          console.log("WorkFlow Agent Started");
-
-         if (
-        decision.decision !== "AUTO_APPROVE" &&
-       decision.decision !== "HUMAN_APPROVED"
-    ) {
-        console.log("Workflow not executed.");
-        return;
-    }
+    
 
 
 
 
-const actions = [
-        "SEND_APPROVAL_EMAIL",
-        "UPDATE_GOOGLE_SHEET",
-       
-    ];
 
-    await executeWorkflow(actions, decision);
+    await executeWorkflow(llmResponse);
 
     console.log("Workflow Completed");
 
