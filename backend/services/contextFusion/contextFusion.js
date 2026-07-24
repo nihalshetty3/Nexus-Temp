@@ -2,6 +2,7 @@ import { normalizeEvent } from "./normalizeEvent.js";
 import { plannerAgent } from "./plannerAgent.js";
 import { toolExecutor } from "./toolExecutor.js";
 import { fusionService } from "./fusionService.js";
+import { decisionAgent } from "../decision/decisionAgent.js";
 
 export async function contextFusion(event) {
 
@@ -37,6 +38,10 @@ export async function contextFusion(event) {
 
     console.log("\n========== FUSED CONTEXT ==========\n");
     console.dir(fusedContext, { depth: null });
+
+    const decision = await decisionAgent(fusedContext);
+    console.log("\n========== DECISION ==========\n");
+    console.dir(decision,{depth:null});
 
     console.log("\n====================================\n");
 }

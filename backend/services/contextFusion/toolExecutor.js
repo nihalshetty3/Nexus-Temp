@@ -16,17 +16,17 @@ export async function toolExecutor(retrievalPlan){
 
             case "google_sheets":
                 retrievedContext.budget = 
-                    await mockSheets(task.query);
+                    await mockSheets(task.objective);
                 break;
             
             case "google_docs":
                 retrievedContext.policy = 
-                    await mockDocs(task.query);
+                    await mockDocs(task.objective);
                 break;
 
             case "drive":
                 retrievedContext.quotation =
-                    await mockDrive(task.query);
+                    await mockDrive(task.objective);
                 break;
         }
     }
