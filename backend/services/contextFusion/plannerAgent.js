@@ -83,8 +83,12 @@ ${JSON.stringify(normalizedEvent, null , 2)}
     const result = await model.generateContent(prompt);
 
     const response = result.response.text();
-
-    return JSON.parse(
+    const plannerOutput = JSON.parse(
         response.replace(/```json/g, "").replace(/```/g, "")
     );
+    
+    console.log("\n========== PLANNER OUTPUT ==========");
+    console.log(JSON.stringify(plannerOutput, null, 2));
+    
+    return plannerOutput;
 }

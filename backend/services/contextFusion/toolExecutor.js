@@ -1,34 +1,15 @@
-import { mockSheets } from "../mcp/mock/sheets.js";
-import { mockDocs } from "../mcp/mock/docs.js";
-import { mockDrive } from "../mcp/mock/drive.js";
-import { mockGmail } from "../mcp/mock/gmail.js";
+import * as Gmail from "../mcp/google/gmail.js";
 
-export async function toolExecutor(retrievalPlan){
+const tools = {
+    gmail: Gmail,
+};
 
-    const retrievedContext = {};
+export async function executeTool(task){
+    const tool = tools[task.tool];
+    if(!tool) throw new Error(`Unknown tool: ${task.tool}`);
 
-    for(const task of retrievalPlan){
-        switch(task.tool){
-            case "gmail":
-                retrievedContext.gmail =
-                    await mockGmail(task.objective);
-                break;
+    const action = tool[task.action];
+    if(!action) throw new Error(`Unknown action: ${task.action}`);
 
-            case "google_sheets":
-                retrievedContext.budget = 
-                    await mockSheets(task.objective);
-                break;
-            
-            case "google_docs":
-                retrievedContext.policy = 
-                    await mockDocs(task.objective);
-                break;
-
-            case "drive":
-                retrievedContext.quotation =
-                    await mockDrive(task.objective);
-                break;
-        }
-    }
-    return retrievedContext;
+    return await action (task.params || {});
 }
