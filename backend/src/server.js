@@ -6,6 +6,11 @@ import bodyParser from "body-parser";
 
 import gmailWebhook from "../routes/gmailWebhook.js";
 import sheetWebhook from "../routes/sheetWebhook.js";
+import { connectRabbitMQ } from "../rabbitmq/connection.js";
+import { startConsumer } from "../rabbitmq/consumer.js";
+
+await connectRabbitMQ();
+await startConsumer();
 
 const app = express();
 
