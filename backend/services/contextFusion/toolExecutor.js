@@ -1,6 +1,6 @@
 import * as Gmail from "../mcp/google/gmail.js";
-import * as Sheets from "./mcp/google/sheets.js";
-import * as Drive from "./mcp/google/drive.js";
+import * as Sheets from "../mcp/google/sheets.js";
+import * as Drive from "../mcp/google/drive.js";
 const tools = {
     gmail: Gmail,
     google_sheets: Sheets,
