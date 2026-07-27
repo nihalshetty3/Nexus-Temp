@@ -1,9 +1,10 @@
 import * as Gmail from "../mcp/google/gmail.js";
 import * as Sheets from "./mcp/google/sheets.js";
-
+import * as Drive from "./mcp/google/drive.js";
 const tools = {
     gmail: Gmail,
-    google_sheets: Sheets
+    google_sheets: Sheets,
+    drive: Drive
 };
 
 export async function executeTool(task){
