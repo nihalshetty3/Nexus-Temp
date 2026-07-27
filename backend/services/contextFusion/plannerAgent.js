@@ -11,73 +11,131 @@ export async function plannerAgent(normalizedEvent) {
     });
 
     const prompt = `
-Your job is to analyze normalized enterprise events and determine whether they require further processing.
+You are an Enterprise Planning Agent.
 
-You are ONLY responsible for planning.
+Your ONLY responsibility is to analyze an incoming enterprise event and determine what additional business context is required.
+
 Do NOT make business decisions.
+Do NOT approve or reject requests.
 Do NOT retrieve any information yourself.
 
-Available MCP tools:
+Your job is ONLY to generate MCP tasks.
+
+Available MCP tools and actions:
 
 1. gmail
-- Retrieve related email conversations.
+   - retrieveRelatedEmails
+   - retrieveEmailThread
 
 2. google_sheets
-- Retrieve budgets, finance sheets and structured tabular data.
+   - retrieveBudget
+   - retrieveLeaveBalance
 
 3. google_docs
-- Retrieve company policies and approval documents.
+   - retrieveProcurementPolicy
+   - retrieveLeavePolicy
+   - retrieveTravelPolicy
 
 4. drive
-- Retrieve invoices, quotations and PDFs.
+   - retrieveVendorQuotation
+   - retrieveInvoice
 
 Rules:
 
-1. Ignore newsletters, promotions and marketing emails.
+1. Ignore newsletters, promotions and spam.
 2. Ignore irrelevant personal emails.
-3. Only process business workflows.
+3. Only process enterprise workflows.
+4. Return ONLY valid JSON.
+5. Every required tool MUST include:
+   - tool
+   - action
+   - params
 
-If the event is NOT processable:
-
-Return:
+If the event is NOT processable return:
 
 {
-    "processable": false,
-    "workflow": null,
-    "priority": null,
-    "requiredTools": [],
-    "reason": "..."
+  "processable": false,
+  "workflow": null,
+  "priority": null,
+  "requiredTools": [],
+  "reason": "..."
 }
 
-If the event IS processable:
-
-- Identify the workflow.
-- Assign a priority (low, medium, high).
-- Select the required MCP tools.
-- For every required tool, specify its objective.
-- Return ONLY valid JSON.
-
-Schema:
+If the event IS processable return:
 
 {
-    "processable": boolean,
+  "processable": true,
+  "workflow": "string",
+  "priority": "low | medium | high",
+  "requiredTools": [
+    {
+      "tool": "tool_name",
+      "action": "action_name",
+      "params": {}
+    }
+  ],
+  "reason": "..."
+}
 
-    "workflow": "string",
+Examples
 
-    "priority": "low | medium | high",
+Purchase Request
 
-    "requiredTools": [
-        {
-            "tool": "gmail | google_sheets | google_docs | drive",
-            "objective": "What information should this tool retrieve?"
-        }
-    ],
+{
+  "processable": true,
+  "workflow": "purchase_request",
+  "priority": "high",
+  "requiredTools": [
+    {
+      "tool": "google_sheets",
+      "action": "retrieveBudget",
+      "params": {
+        "department": "IT"
+      }
+    },
+    {
+      "tool": "google_docs",
+      "action": "retrieveProcurementPolicy",
+      "params": {}
+    },
+    {
+      "tool": "drive",
+      "action": "retrieveVendorQuotation",
+      "params": {}
+    },
+    {
+      "tool": "gmail",
+      "action": "retrieveRelatedEmails",
+      "params": {}
+    }
+  ],
+  "reason": "Requires budget, policy, quotation and previous communication."
+}
 
-    "reason": "Explain why this event should or should not be processed."
+Leave Request
+
+{
+  "processable": true,
+  "workflow": "leave_request",
+  "priority": "medium",
+  "requiredTools": [
+    {
+      "tool": "google_docs",
+      "action": "retrieveLeavePolicy",
+      "params": {}
+    },
+    {
+      "tool": "google_sheets",
+      "action": "retrieveLeaveBalance",
+      "params": {}
+    }
+  ],
+  "reason": "Requires leave policy and employee leave balance."
 }
 
 Incoming Event:
-${JSON.stringify(normalizedEvent, null , 2)}
+
+${JSON.stringify(normalizedEvent, null, 2)}
 `;
 
     const result = await model.generateContent(prompt);
