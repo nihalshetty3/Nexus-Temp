@@ -7,7 +7,6 @@ Agentic AI for business automation.
 # Visual flow
 ![Uploading image.png…]()
 
-
 [ Incoming Webhook HTTP POST ]
               │
               ▼
@@ -68,3 +67,4 @@ Agentic AI for business automation.
                                               ┌───────────────────────┐
                                               │ Resumes Action Engine │
                                               └───────────────────────┘
+                                              
