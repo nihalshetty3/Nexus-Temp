@@ -3,7 +3,9 @@ import {authorize} from "./auth.js";
 import { GmailQueries } from "./gmailQueries.js";
 
 async function searchEmails(query) {
+    console.log("Entered searchEmails");
 
+    return [];
     const auth = await authorize();
 
     const gmail = google.gmail({
@@ -88,8 +90,6 @@ async function searchEmails(query) {
                     (mail.data.payload.parts || []).some(
                         part => part.filename && part.filename.length > 0
                     ),
-
-                raw: mail.data
             };
 
         })
@@ -120,4 +120,29 @@ export async function retrieveBudgetDiscussions(){
     return await searchEmails(
         GmailQueries.BUDGET_DISCUSSIONS
     )
+}
+
+export async function retrieveRelatedEmails() {
+    console.log("➡️ Fetching purchase requests");
+    const purchaseRequests = await retrievePurchaseRequests();
+    console.log("✅ Purchase requests:", purchaseRequests.length);
+
+    console.log("➡️ Fetching approval emails");
+    const approvalEmails = await retrieveApprovalEmails();
+    console.log("✅ Approval emails:", approvalEmails.length);
+
+    console.log("➡️ Fetching vendor quotations");
+    const vendorQuotations = await retrieveVendorQuotations();
+    console.log("✅ Vendor quotations:", vendorQuotations.length);
+
+    console.log("➡️ Fetching budget discussions");
+    const budgetDiscussions = await retrieveBudgetDiscussions();
+    console.log("✅ Budget discussions:", budgetDiscussions.length);
+
+    return [
+        ...purchaseRequests,
+        ...approvalEmails,
+        ...vendorQuotations,
+        ...budgetDiscussions
+    ];
 }

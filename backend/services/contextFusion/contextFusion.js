@@ -16,8 +16,8 @@ export async function contextFusion(event) {
      const plan = await plannerAgent(normalizedEvent);
     
 
-    console.log("\nPlanner Output:");
-    console.log(plan);
+    // console.log("\nPlanner Output:");
+    // console.log(plan);
 
     if (!plan.processable) {
         console.log("\nEvent ignored.");
@@ -31,8 +31,18 @@ export async function contextFusion(event) {
         retrievedContext.push(result);
     }
 
-    console.log("\nRetrieved Context:");
-    console.log(retrievedContext);
+    console.log("\n========== TOOL EXECUTION ==========\n");
+
+for (let i = 0; i < plan.requiredTools.length; i++) {
+    const task = plan.requiredTools[i];
+    const result = retrievedContext[i];
+
+    console.log(
+        ` ${task.tool}.${task.action} → ${
+            Array.isArray(result) ? result.length + " records" : "Success"
+        }`
+    );
+}
 
     const fusedContext = fusionService(
         normalizedEvent,
@@ -41,11 +51,27 @@ export async function contextFusion(event) {
     );
 
     console.log("\n========== FUSED CONTEXT ==========\n");
-    console.dir(fusedContext, { depth: null });
+
+    console.log({
+        event: fusedContext.event.summary,
+        workflow: fusedContext.workflow.name,
+        priority: fusedContext.workflow.priority,
+        contextSources: fusedContext.businessContext.length
+    });
 
     const decision = await decisionAgent(fusedContext);
+    
     console.log("\n========== DECISION ==========\n");
-    console.dir(decision,{depth:null});
+
+    console.log(`Decision   : ${decision.decision}`);
+    console.log(`Risk       : ${decision.risk}`);
+    console.log(`Confidence : ${(decision.confidence * 100).toFixed(0)}%`);
+    console.log(`Reason     : ${decision.reason}`);
+
+    if (decision.actions?.length) {
+        console.log("\nActions:");
+        decision.actions.forEach(action => console.log(`• ${action}`));
+    }
 
     console.log("\n====================================\n");
 }

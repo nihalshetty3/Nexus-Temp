@@ -3,6 +3,8 @@ version: "3.9"
 services:
   rabbitmq:
     image: rabbitmq:4-management
+    logging:
+      driver: "none"
     container_name: nexus-rabbitmq
 
     ports:
