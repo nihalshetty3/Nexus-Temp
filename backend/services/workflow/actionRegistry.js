@@ -1,33 +1,39 @@
+// services/workflow/actionRegistry.js
 
-export const actionRegistry={
-       SEND_APPROVAL_EMAIL: async(context)=>{
-           console.log("sending approval email");
+import { ACTIONS } from "./actions.js";
 
-           /*
-            TODO
+export const actionRegistry = {
 
-            gmailTools.sendMail({
-                to,
-                subject,
-                body
-            });
+    [ACTIONS.SEND_APPROVAL_EMAIL]: async (context) => {
 
-        */
+        console.log("📧 Sending Approval Email");
 
-       },
-        UPDATE_GOOGLE_SHEET: async (context) => {
+        // TODO
+        // await gmailService.sendApprovalMail(context);
 
-        console.log("Updating Google Sheet");
+    },
 
-        /*
-            TODO
+    [ACTIONS.UPDATE_GOOGLE_SHEET]: async (context) => {
 
-            sheetsTools.updateRow({
-                purchaseId,
-                status:"Approved"
-            });
+       // actionRegistry.js
 
-        */
+
+
+    console.log("========== MOCK GOOGLE SHEETS ==========");
+    console.log("Updating Purchase...");
+    console.log(JSON.stringify(context, null, 2));
+    console.log("✅ Sheet Updated Successfully (Mock)");
+
+
+    },
+
+    [ACTIONS.CREATE_JIRA_TICKET]: async (context) => {
+
+        console.log("🎫 Creating Jira Ticket");
+
+        // TODO
+        // await jiraService.createTicket(context);
 
     }
-}
+
+};
