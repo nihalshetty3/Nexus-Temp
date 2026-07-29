@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    logging:
+      driver: "none"
+    container_name: nexus-rabbitmq
+
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+    restart: unless-stopped
+
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  backend:
+    build: .
+    container_name: nexus-backend
+
+    depends_on:
+      - rabbitmq
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    restart: unless-stopped
+
+volumes:
+  rabbitmq_data:
