@@ -1,27 +1,33 @@
-import {actionRegistry} from "./actionRegistry.js";
+// services/workflow/workflowExecutor.js
 
-export async function executeWorkFlow(actions,context){
-        console.log("Executing workflow");
-         
-    const workflow = [
+import { actionRegistry } from "./actionRegistry.js";
 
-        "SEND_EMAIL",
+export async function workflowExecutor(actions, context) {
 
-        "UPDATE_SHEET",
+    for (const action of actions) {
 
-        "CREATE_JIRA"
+        const handler = actionRegistry[action];
 
-    ];
+        if (!handler) {
 
-        for(const action of actions){
-               const handler=actionRegistry[action];
+            console.warn(`Unknown action : ${action}`);
+            continue;
 
-               if(handler){
-                  await handler(context);
-               }
-
-             
         }
-        console.log("\nWorkflow Finished");
+
+        try {
+
+            await handler(context);
+
+        }
+
+        catch (err) {
+
+            console.error(`${action} failed`);
+            console.error(err.message);
+
+        }
+
+    }
 
 }
