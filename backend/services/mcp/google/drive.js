@@ -1,7 +1,7 @@
 import {google} from "googleapis";
-import { authorize } from "./auth";
+import { authorize } from "./auth.js";
 
-export async function retrieveVendorQuotation(){
+export async function retrieveVendorQuotation(vendor){
     const auth = await authorize();
 
     const drive = google.drive({
@@ -10,8 +10,8 @@ export async function retrieveVendorQuotation(){
     });
 
     const response = await drive.files.list({
-        q:"name contains quotation",
-        fileds: "files(id , name . mimeType , webViewLink)"
+        q: "name contains 'quotation'",
+        fields: "files(id , name , mimeType , webViewLink)"
     });
 
     return response.data.files;
@@ -30,5 +30,5 @@ export async function retrieveInvoice(){
         fields:"files(id , name , webViewLink)"
     });
 
-    return response.data.fields;
+    return response.data.files;
 }

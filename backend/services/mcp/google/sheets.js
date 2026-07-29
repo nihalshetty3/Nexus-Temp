@@ -4,7 +4,7 @@ import {authorize} from "./auth.js";
 const SPREADSHEET_ID = process.env.BUDGET_SHEET_ID;
 const RANGE = "Budget!A:D";
 
-export async function retrieveBudegt({department}) {
+export async function retrieveBudget({department}) {
     const auth = await authorize();
 
     const sheets = google.sheets({
