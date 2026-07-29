@@ -51,6 +51,7 @@ Rules:
    - action
    - params
 
+
 If the event is NOT processable return:
 
 {

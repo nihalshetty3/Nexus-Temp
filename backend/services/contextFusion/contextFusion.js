@@ -56,7 +56,12 @@ for (let i = 0; i < plan.requiredTools.length; i++) {
         event: fusedContext.event.summary,
         workflow: fusedContext.workflow.name,
         priority: fusedContext.workflow.priority,
-        contextSources: fusedContext.businessContext.length
+        contextSources: {
+            budget: fusedContext.context.budget ? 1 : 0,
+            policy: fusedContext.context.policy ? 1 : 0,
+            quotations: fusedContext.context.quotations.length,
+            relatedEmails: fusedContext.context.relatedEmails.length
+        }
     });
 
     const decision = await decisionAgent(fusedContext);

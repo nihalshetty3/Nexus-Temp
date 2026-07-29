@@ -4,7 +4,16 @@ import {authorize} from "./auth.js";
 const SPREADSHEET_ID = process.env.BUDGET_SHEET_ID;
 const RANGE = "Budget!A:D";
 
-export async function retrieveBudget({department}) {
+export async function retrieveBudget({department , amount=0}) {
+
+    if(!department) {
+        console.log("Department not provided");
+
+        return {
+            found: false,
+            error: "Department not provided"
+        };
+    }
     const auth = await authorize();
 
     const sheets = google.sheets({
@@ -23,19 +32,44 @@ export async function retrieveBudget({department}) {
         return null;
     }
 
-    const headers = rows[0];
-
     for(let i=1; i<rows.length; i++){
         const row = rows[i];
 
         if(row[0].toLowerCase() === department.toLowerCase()){
+            const budget = Number(row[1]);
+            const spent = Number(row[2]);
+            const remaining = Number(row[3]);
+
+            const utilization = Number(
+                ((spent / budget) * 100).toFixed(2)
+            );
             return {
-                department: row[0],
-                budget: Number(row[1]),
-                spent: Number(row[2]),
-                remaining: Number(row[3])
+                department,
+
+                budget,
+
+                spent,
+
+                remaining,
+
+                requestedAmount: amount,
+
+                sufficientBudget:
+                    remaining >= amount,
+
+                utilization,
+
+                status:
+                utilization >= 90
+                    ? "CRITICAL"
+                    : utilization >= 75
+                    ? "WARNING"
+                    : "HEALTH"
             };
         }
     }
-    return null;
+    return {
+        department,
+        found: false
+    };
 }
