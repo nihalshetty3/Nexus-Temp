@@ -4,6 +4,7 @@ import { executeTool } from "./toolExecutor.js";
 import { fusionService } from "./fusionService.js";
 import { decisionAgent } from "../decision/decisionAgent.js";
 import { waitForApproval } from "../execution/humanApprovals.js";
+import { executionEngine } from "../execution/executionEngine.js";
 
 export async function contextFusion(event) {
 
@@ -80,6 +81,22 @@ export async function contextFusion(event) {
         console.log("\nActions:");
         decision.actions.forEach(action => console.log(`• ${action}`));
     }
+
+    if(decision.requireHumanApproval){
+        const status = await waitForApproval(decision);
+
+        if(status==="REJECTED"){
+            console.log("Human rejected the request");
+            console.log("Workflow terminated");
+
+            return;
+        }
+        console.log("human approved the request");
+    }
+
+    console.log("\n========== EXECUTION ==========\n");
+
+    await executionEngine(decision , fusedContext);
 
     console.log("\n====================================\n");
 }

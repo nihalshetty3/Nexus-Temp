@@ -156,7 +156,7 @@ export async function retrieveRelatedEmails() {
     return summarizeEmails(allEmails);
 }
 
-export async function sendApprovedEmail(params){
+export async function sendEmail(params){
     const auth = await authorize();
 
     const gmail = google.gmail({
