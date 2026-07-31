@@ -94,23 +94,31 @@ Schema:
 
     "risk":"LOW | MEDIUM | HIGH",
 
-    "reason":"Explain why the decision was taken using the retrieved business context.",
+    // "reason":"Explain why the decision was taken using the retrieved business context.",
+    "reason":"",
+    // "evidence":[
+    //     "Budget remaining: ₹18,00,000",
+    //     "Policy threshold: ₹5,00,000",
+    //     "Vendor quotation found",
+    //     "2 previous MacBook purchases approved"
+    // ],
 
-    "evidence":[
-        "Budget remaining: ₹18,00,000",
-        "Policy threshold: ₹5,00,000",
-        "Vendor quotation found",
-        "2 previous MacBook purchases approved"
-    ],
+    // "actions":[
+    //     "action1",
+    //     "action2"
+    // ],
 
-    "actions":[
-        "action1",
-        "action2"
-    ],
-
-    "requiresHumanApproval":true
+    "requiresHumanApproval":true,
+    "executionPlan":[
+        {
+            "service":"",
+            "action":"",
+            "params":{}
+        }
+    ]
 }
 `;
+
     const result = await model.generateContent(prompt);
     const response = result.response.text();
 

@@ -155,3 +155,39 @@ export async function retrieveRelatedEmails() {
 
     return summarizeEmails(allEmails);
 }
+
+export async function sendApprovedEmail(params){
+    const auth = await authorize();
+
+    const gmail = google.gmail({
+        version:"v1",
+        auth
+    });
+
+    const email = [
+        `To: ${params.to}`,
+        "Content-Type: text/plain; charset=UTF-8",
+        "MIME-Version: 1.0",
+        `Subject: ${params.subject}`,
+        "",
+        params.body
+    ].join("\n");
+
+    const encoded = Buffer 
+        .from(email)
+        .toString("base64")
+        .replace(/\+/g,"-")
+
+        .replace(/\//g,"_")
+
+        .replace(/=+$/,"");
+
+        await gmail.users.messages.send({
+            userId:"me",
+            requestBody:{
+                raw: encoded
+            }
+        });
+
+        console.log("Email sent");
+}
