@@ -1,33 +1,53 @@
+// services/workflow/actionRegistry.js
 
-export const actionRegistry={
-       SEND_APPROVAL_EMAIL: async(context)=>{
-           console.log("sending approval email");
+import { retrieveBudget } from "../mcp/sheets/sheetsClient.js";
+import { ACTIONS } from "./actions.js";
 
-           /*
-            TODO
+export const actionRegistry = {
 
-            gmailTools.sendMail({
-                to,
-                subject,
-                body
-            });
+    [ACTIONS.SEND_APPROVAL_EMAIL]: async (context) => {
 
-        */
+        console.log("📧 Sending Approval Email");
 
-       },
-        UPDATE_GOOGLE_SHEET: async (context) => {
+        // TODO
+        // await gmailService.sendApprovalMail(context);
 
-        console.log("Updating Google Sheet");
+    },
 
-        /*
-            TODO
+    [ACTIONS.UPDATE_GOOGLE_SHEET]: async (context) => {
 
-            sheetsTools.updateRow({
-                purchaseId,
-                status:"Approved"
-            });
+        console.log("========== GOOGLE SHEETS ==========");
+        const department=context.event.department;
+        const amount=Number(context.event.amount);
 
-        */
+        const budget=await retrieveBudget({
+             department
+        });
+
+         if (!budget || !budget.success) {
+            throw new Error("Department not found in Budget Sheet");
+        }
+         const newSpent = Number(budget.spent) + amount;
+        const newRemaining = Number(budget.budget) - newSpent;
+
+        await updateBudget({
+            department,
+            spent: newSpent,
+            remaining: newRemaining
+        });
+
+        console.log(" Budget Sheet Updated");
+
+
+    },
+
+    [ACTIONS.CREATE_JIRA_TICKET]: async (context) => {
+
+        console.log(" Creating Jira Ticket");
+
+        // TODO
+        // await jiraService.createTicket(context);
 
     }
-}
+
+};

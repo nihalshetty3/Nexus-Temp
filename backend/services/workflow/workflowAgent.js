@@ -1,17 +1,46 @@
+// services/workflow/workflowAgent.js
 
-import {executeWorkFlow} from "./workflowExecutor.js";
+import { ACTIONS } from "./actions.js";
+import { workflowExecutor } from "./workflowExecutor.js";
 
-export async function workflowAgent(llmResponse){
-        
-         console.log("WorkFlow Agent Started");
-    
+export async function workflowAgent(decision, fusedContext) {
 
+    let workflow = [];
 
+    switch (decision.decision) {
 
+        case "APPROVE":
 
+            workflow = [
 
-    await executeWorkflow(llmResponse);
+                ACTIONS.SEND_APPROVAL_EMAIL,
 
-    console.log("Workflow Completed");
+                ACTIONS.UPDATE_GOOGLE_SHEET,
+
+                ACTIONS.CREATE_JIRA_TICKET
+
+            ];
+
+            break;
+
+        case "REJECT":
+
+            console.log("Workflow terminated.");
+
+            return;
+
+        case "HUMAN_REVIEW":
+
+            console.log("Waiting for Human Approval...");
+
+            return;
+
+        default:
+
+            throw new Error("Invalid Decision");
+
+    }
+
+    await workflowExecutor(workflow, fusedContext);
 
 }
