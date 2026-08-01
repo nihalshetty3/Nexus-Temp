@@ -1,6 +1,9 @@
 // services/workflow/actionRegistry.js
 
-import { retrieveBudget } from "../mcp/sheets/sheetsClient.js";
+import {
+    retrieveBudget,
+    updateBudget
+} from "../mcp/sheets/sheetsClient.js";
 import { ACTIONS } from "./actions.js";
 
 export const actionRegistry = {
@@ -14,33 +17,40 @@ export const actionRegistry = {
 
     },
 
-    [ACTIONS.UPDATE_GOOGLE_SHEET]: async (context) => {
+  [ACTIONS.UPDATE_GOOGLE_SHEET]: async (context) => {
 
-        console.log("========== GOOGLE SHEETS ==========");
-        const department=context.event.department;
-        const amount=Number(context.event.amount);
+    console.log("========== GOOGLE SHEETS ==========");
 
-        const budget=await retrieveBudget({
-             department
-        });
+    const department = context.workflowData.department;
+    const amount = Number(context.workflowData.amount);
 
-         if (!budget || !budget.success) {
-            throw new Error("Department not found in Budget Sheet");
-        }
-         const newSpent = Number(budget.spent) + amount;
-        const newRemaining = Number(budget.budget) - newSpent;
+    const budget = context.businessContext.budget;
 
-        await updateBudget({
-            department,
-            spent: newSpent,
-            remaining: newRemaining
-        });
+    if (!budget || !budget.success) {
+        throw new Error("Department not found in Budget Sheet");
+    }
 
-        console.log(" Budget Sheet Updated");
+    console.log("\nCurrent Budget");
+    console.log(budget);
 
+    const newSpent = Number(budget.spent) + amount;
+    const newRemaining = Number(budget.budget) - newSpent;
 
-    },
+    const result = await updateBudget({
 
+        department,
+
+        spent: newSpent,
+
+        remaining: newRemaining
+
+    });
+
+    console.log(result);
+
+    console.log("\n Budget Sheet Updated");
+
+},
     [ACTIONS.CREATE_JIRA_TICKET]: async (context) => {
 
         console.log(" Creating Jira Ticket");
