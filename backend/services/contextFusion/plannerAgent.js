@@ -103,7 +103,8 @@ Purchase Request
     {
       "tool": "drive",
       "action": "retrieveVendorQuotation",
-      "params": {}
+      "params": {
+        "vendor": "Apple"}
     },
     {
       "tool": "gmail",
