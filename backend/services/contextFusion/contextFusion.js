@@ -6,6 +6,8 @@ import { decisionAgent } from "../decision/decisionAgent.js";
 import { waitForApproval } from "../execution/humanApprovals.js";
 import { executionEngine } from "../execution/executionEngine.js";
 import { workflowAgent } from "../workflow/workflowAgent.js";
+import { saveAuditLog } from "../audit/auditLogger.js";
+
 export async function contextFusion(event) {
 
     console.log("\n========== CONTEXT FUSION ==========\n");
@@ -55,7 +57,7 @@ export async function contextFusion(event) {
 
     console.log({
         event: fusedContext.event.summary,
-        workflow: fusedContext.workflow.name,
+        fusedContext,
         priority: fusedContext.workflow.priority,
         contextSources: {
             budget: fusedContext.context.budget ? 1 : 0,
@@ -82,7 +84,7 @@ export async function contextFusion(event) {
         decision.actions.forEach(action => console.log(`• ${action}`));
     }
 
-    if(decision.requireHumanApproval){
+    if(decision.requiresHumanApproval){
         const status = await waitForApproval(decision);
 
         if(status==="REJECTED"){
@@ -97,6 +99,12 @@ export async function contextFusion(event) {
     console.log("\n========== EXECUTION ==========\n");
 
     await executionEngine(decision , fusedContext);
+    await saveAuditLog({
+        event:normalizedEvent,
+        fusedContext,
+        decision,
+        executionPlan: decision.executionPlan || []
+    });
 
     await workflowAgent(decision,fusedContext);
 

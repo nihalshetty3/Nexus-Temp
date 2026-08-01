@@ -25,7 +25,6 @@ Available MCP tools and actions:
 
 1. gmail
    - retrieveRelatedEmails
-   - retrieveEmailThread
 
 2. google_sheets
    - retrieveBudget
