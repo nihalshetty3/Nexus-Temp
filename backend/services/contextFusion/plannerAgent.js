@@ -1,13 +1,13 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 export async function plannerAgent(normalizedEvent) {
 
-    console.log("Gemini Key:", process.env.GEMINI_API_KEY);
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is missing");
+    }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-    const model = genAI.getGenerativeModel({
-        model: "gemini-flash-latest"
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY,
     });
 
     const prompt = `
@@ -51,7 +51,6 @@ Rules:
    - action
    - params
 
-
 If the event is NOT processable return:
 
 {
@@ -70,9 +69,11 @@ If the event IS processable return:
   "priority": "low | medium | high",
   "requiredTools": [
     {
-      "tool": "tool_name",
-      "action": "action_name",
-      "params": {}
+      "tool": "drive",
+      "action": "retrieveVendorQuotation",
+      "params": {
+        "vendor":"Apple"
+      }
     }
   ],
   "reason": "..."
@@ -139,15 +140,29 @@ Incoming Event:
 ${JSON.stringify(normalizedEvent, null, 2)}
 `;
 
-    const result = await model.generateContent(prompt);
+    try {
 
-    const response = result.response.text();
-    const plannerOutput = JSON.parse(
-        response.replace(/```json/g, "").replace(/```/g, "")
-    );
-    
-    console.log("\n========== PLANNER OUTPUT ==========");
-    console.log(JSON.stringify(plannerOutput, null, 2));
-    
-    return plannerOutput;
+        const result = await ai.models.generateContent({
+            model: "gemini-3.6-flash",
+            contents: prompt,
+        });
+
+        const response = result.text;
+
+        const plannerOutput = JSON.parse(
+            response
+                .replace(/```json/g, "")
+                .replace(/```/g, "")
+                .trim()
+        );
+
+        console.log("\n========== PLANNER OUTPUT ==========");
+        console.log(JSON.stringify(plannerOutput, null, 2));
+
+        return plannerOutput;
+
+    } catch (err) {
+        console.error("Gemini Error:", err);
+        throw err;
+    }
 }

@@ -1,18 +1,33 @@
 import { google } from "googleapis";
 import { authorize } from "./auth.js";
 
-export async function retrieveVendorQuotation(vendor = "") {
+export async function retrieveVendorQuotation(params={}) {
+    console.log("\n===== RAW PARAMS =====");
+console.log(params);
+
+console.log("\n===== PARAMS.VENDOR =====");
+console.log(params.vendor);
+
+console.log("\n===== TYPE =====");
+console.log(typeof params.vendor);
+
+    const vendor = (params.vendor || "")
+    .toLowerCase()
+    .replace(/\b(india|pvt|ltd)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
     const auth = await authorize();
 
     const drive = google.drive({
-        version: "v3",
+        version:"v3",
         auth
     });
 
-    const query = vendor
-        ? `name contains '${vendor}' and name contains 'quotation'`
-        : "name contains 'quotation'";
+    const query = "name contains 'quotation'";
+
+        console.log("\n===== DRIVE QUERY =====");
+        console.log(query);
 
     const response = await drive.files.list({
 
@@ -25,6 +40,15 @@ export async function retrieveVendorQuotation(vendor = "") {
     });
 
     const files = response.data.files || [];
+    console.log("\n===== DRIVE FILES =====");
+    console.log(files);
+
+    console.log("\n===== DRIVE RESULT =====");
+    console.log(JSON.stringify({
+    available: files.length > 0,
+    quotationCount: files.length,
+    files
+}, null, 2));
 
     return {
 
@@ -46,10 +70,16 @@ export async function retrieveVendorQuotation(vendor = "") {
 
         quotations: files
     };
+    
 }
 
-export async function retrieveInvoice(vendor = "") {
+export async function retrieveInvoice(params={}) {
 
+    const vendor = (params.vendor || "")
+    .toLowerCase()
+    .replace(/\b(india|pvt|ltd)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
     const auth = await authorize();
 
     const drive = google.drive({
@@ -57,9 +87,7 @@ export async function retrieveInvoice(vendor = "") {
         auth
     });
 
-    const query = vendor
-        ? `name contains '${vendor}' and name contains 'invoice'`
-        : "name contains 'invoice'";
+    const query = "name contains 'quotation'";
 
     const response = await drive.files.list({
 
