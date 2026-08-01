@@ -5,7 +5,7 @@ import { fusionService } from "./fusionService.js";
 import { decisionAgent } from "../decision/decisionAgent.js";
 import { waitForApproval } from "../execution/humanApprovals.js";
 import { executionEngine } from "../execution/executionEngine.js";
-
+import { workflowAgent } from "../workflow/workflowAgent.js";
 export async function contextFusion(event) {
 
     console.log("\n========== CONTEXT FUSION ==========\n");
@@ -98,5 +98,9 @@ export async function contextFusion(event) {
 
     await executionEngine(decision , fusedContext);
 
+    await workflowAgent(decision,fusedContext);
+
     console.log("\n====================================\n");
+    
+
 }

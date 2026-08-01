@@ -57,13 +57,23 @@ export function fusionService(
             context.relatedEmails?.similarPurchases ?? 0
     };
 
-    return {
-        event: normalizedEvent,
-        workflow: {
-            name: plannerOutput.workflow,
-            priority: plannerOutput.priority
-        },
-        context,
-        summary
-    };
+  return {
+
+    event: normalizedEvent,
+
+    workflow: {
+        name: plannerOutput.workflow,
+        priority: plannerOutput.priority
+    },
+    workflowData: plannerOutput.workflowData,
+    context,
+    summary,
+    businessContext: {
+        budget: context.budget,
+        policy: context.policy,
+        quotations: context.quotations,
+        relatedEmails: context.relatedEmails
+    }
+
+};
 }
