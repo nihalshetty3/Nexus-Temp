@@ -1,23 +1,29 @@
-// testWorkflow.js
-
 import { workflowAgent } from "./services/workflow/workflowAgent.js";
 
 const decision = {
-    decision: "APPROVE",
-    confidence: 0.95,
-    risk: "LOW",
-    reason: "Budget available",
-    requiresHumanApproval: false
+    decision: "APPROVE"
 };
 
 const fusedContext = {
-    purchaseId: "PUR-101",
-    employee: {
-        name: "Anvith",
-        email: "anvith@gmail.com"
+
+    workflowData: {
+        department: "IT",
+        amount: 100000,
+        vendor: "Apple",
+        requester: "John",
+        item: "MacBook Pro"
     },
-    vendor: "Dell",
-    amount: 450000
+
+    businessContext: {
+        budget: {
+            success: true,
+            department: "IT",
+            budget: 500000,
+            spent: 100000,
+            remaining: 400000
+        }
+    }
+
 };
 
 await workflowAgent(decision, fusedContext);
