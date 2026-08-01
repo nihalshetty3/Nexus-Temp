@@ -69,9 +69,11 @@ If the event IS processable return:
   "priority": "low | medium | high",
   "requiredTools": [
     {
-      "tool": "tool_name",
-      "action": "action_name",
-      "params": {}
+      "tool": "drive",
+      "action": "retrieveVendorQuotation",
+      "params": {
+        "vendor":"Apple"
+      }
     }
   ],
   "reason": "..."
