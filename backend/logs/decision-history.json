@@ -1,5 +1,101 @@
 [
     {
+        "id": "REQ-1785647174925",
+        "timestamp": "2026-08-02T05:06:14.925Z",
+        "workflow": "purchase_request",
+        "decision": "HUMAN_REVIEW",
+        "confidence": 0.3,
+        "risk": "HIGH",
+        "reason": "The request fails on multiple procurement policy requirements: IT department budget details are missing in the enterprise system, and the policy-mandated minimum of 3 vendor quotations are not provided. The requester explicitly asked for human review.",
+        "contextUsed": {
+            "budget": true,
+            "policy": true,
+            "quotations": 0,
+            "relatedEmails": 32
+        },
+        "executedServices": [
+            {
+                "service": "slack",
+                "action": "sendMessage"
+            }
+        ],
+        "status": "SUCCESS"
+    },
+    {
+        "id": "REQ-1785646884961",
+        "timestamp": "2026-08-02T05:01:24.961Z",
+        "workflow": "purchase_request",
+        "decision": "HUMAN_REVIEW",
+        "confidence": 0.1,
+        "risk": "HIGH",
+        "reason": "The request fails on multiple procurement policy requirements: the department budget for 'IT' is not found in the system, and the required minimum of 3 vendor quotations is missing. Additionally, the requester explicitly asked for human review.",
+        "contextUsed": {
+            "budget": true,
+            "policy": true,
+            "quotations": 0,
+            "relatedEmails": 32
+        },
+        "executedServices": [
+            {
+                "service": "slack",
+                "action": "sendMessage"
+            }
+        ],
+        "status": "SUCCESS"
+    },
+    {
+        "id": "REQ-1785646743017",
+        "timestamp": "2026-08-02T04:59:03.017Z",
+        "requestor": "Gauthami P <gauthami1205@gmail.com>",
+        "subject": "Purchase Request Submission: Office Equipment Upgrade (₹8,000)",
+        "workflow": "purchase_request",
+        "decision": "REJECT",
+        "confidence": 0.95,
+        "risk": "LOW",
+        "reason": "Department budget details are unavailable in the enterprise system and mandatory vendor quotations (minimum 3 required by procurement policy) are missing.",
+        "contextUsed": {
+            "budget": false,
+            "policy": true,
+            "quotations": 0,
+            "relatedEmails": 32
+        },
+        "executedServices": [
+            {
+                "service": "gmail",
+                "action": "sendEmail"
+            },
+            {
+                "service": "slack",
+                "action": "sendMessage"
+            }
+        ],
+        "status": "SUCCESS"
+    },
+    {
+        "id": "REQ-1785641008697",
+        "timestamp": "2026-08-02T03:23:28.697Z",
+        "requestor": "Gauthami P <gauthami1205@gmail.com>",
+        "subject": "Purchase Request Submission: Office Equipment Upgrade (₹8,000)",
+        "workflow": "purchase_request",
+        "decision": "HUMAN_REVIEW",
+        "confidence": 0.2,
+        "risk": "HIGH",
+        "reason": "The request violates procurement policy due to missing department budget information and the absence of the mandatory minimum of 3 vendor quotations. Additionally, the department could not be identified from the request.",
+        "contextUsed": {
+            "budget": true,
+            "policy": true,
+            "quotations": 0,
+            "relatedEmails": 32
+        },
+        "executedServices": [
+            {
+                "service": "slack",
+                "action": "sendMessage"
+            }
+        ],
+        "status": "SUCCESS"
+    },
+    {
         "id": "REQ-1785640376359",
         "timestamp": "2026-08-02T03:12:56.359Z",
         "requestor": "Gauthami Poojary <gauthami72005@gmail.com>",
