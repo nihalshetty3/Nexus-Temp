@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 
 import gmailWebhook from "../routes/gmailWebhook.js";
 import sheetWebhook from "../routes/sheetWebhook.js";
+import jiraWebhook from "../routes/jiraWebhook.js";
 import { connectRabbitMQ } from "../rabbitmq/connection.js";
 import { startConsumer } from "../rabbitmq/consumer.js";
 
@@ -17,10 +18,11 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use("/webhook/gmail" , gmailWebhook);
-app.use("/webhook/sheets" , sheetWebhook);
+app.use("/webhook/gmail", gmailWebhook);
+app.use("/webhook/sheets", sheetWebhook);
+app.use("/webhook/jira", jiraWebhook);
 
-app.listen(3000 , () => {
+app.listen(3000, () => {
     console.log("Server running");
 });
 

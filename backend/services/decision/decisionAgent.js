@@ -85,12 +85,12 @@ REJECT when:
 - Budget unavailable.
 - Budget insufficient.
 - Procurement policy violated.
-- Mandatory quotations/documents missing.
+- Mandatory quotations/documents missing (unless manager approval or human review is explicitly requested).
 - Duplicate/conflicting requests detected.
 
 HUMAN_REVIEW when:
 - Purchase exceeds automatic approval threshold.
-- Manager approval required.
+- Manager approval or human review is explicitly requested in the email body/subject.
 - Enterprise information is incomplete.
 - Confidence is below 0.80.
 
@@ -195,11 +195,50 @@ Rules
 `;
 
     try {
+        let result;
+        let attempt = 0;
+        const maxRetries = 3;
+        const fallbackModels = ["gemini-2.5-flash", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-3.1-flash-lite", "gemini-3-flash-preview"];
+        let modelIndex = 0;
 
-        const result = await ai.models.generateContent({
-            model: "gemini-3.6-flash",
-            contents: prompt,
-        });
+        while (modelIndex < fallbackModels.length) {
+            const currentModel = fallbackModels[modelIndex];
+            try {
+                result = await ai.models.generateContent({
+                    model: currentModel,
+                    contents: prompt,
+                });
+                break;
+            } catch (err) {
+                // Check if model is not found/unavailable (404) or daily limit is exhausted (429/quota/limit: 20)
+                const isModelUnavailableOrExhausted = err.status === 404 || 
+                    (err.status === 429 && err.message && (err.message.includes("limit: 20") || err.message.includes("RESOURCE_EXHAUSTED"))) ||
+                    (err.message && (err.message.includes("no longer available") || err.message.includes("not found") || err.message.includes("NOT_FOUND")));
+                
+                if (isModelUnavailableOrExhausted && modelIndex < fallbackModels.length - 1) {
+                    console.warn(`[Decision Agent] Model ${currentModel} is unavailable or exhausted. Falling back to next model...`);
+                    modelIndex++;
+                    continue;
+                }
+
+                // If it is a transient error (429/503), retry with backoff on the current model first
+                const isRetryable = err.status === 429 || err.status === 503 ||
+                                    (err.message && (err.message.includes("429") || err.message.includes("503") || err.message.includes("RESOURCE_EXHAUSTED") || err.message.includes("UNAVAILABLE")));
+                if (isRetryable && attempt < maxRetries) {
+                    attempt++;
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    console.warn(`[Decision Agent] Transient API error on ${currentModel} (429/503). Retrying attempt ${attempt}/${maxRetries} after ${delay.toFixed(0)}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                } else if (modelIndex < fallbackModels.length - 1) {
+                    // Try next model if retries exhausted
+                    console.warn(`[Decision Agent] Retries exhausted for ${currentModel}. Falling back to next model...`);
+                    modelIndex++;
+                    attempt = 0;
+                } else {
+                    throw err;
+                }
+            }
+        }
 
         const response = result.text;
 
