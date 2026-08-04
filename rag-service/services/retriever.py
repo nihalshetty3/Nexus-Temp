@@ -4,7 +4,7 @@ import pickle
 from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-def retrieve(query , k=3):
+def retrieve(query , k=10):
     index = faiss.read_index("vectorstore/index.faiss")
     
     with open("vectorstore/chunks.pkl", "rb") as f:
