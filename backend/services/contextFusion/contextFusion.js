@@ -3,7 +3,6 @@ import { plannerAgent } from "./plannerAgent.js";
 import { executeTool } from "./toolExecutor.js";
 import { fusionService } from "./fusionService.js";
 import { decisionAgent } from "../decision/decisionAgent.js";
-import { waitForApproval } from "../execution/humanApprovals.js";
 import { executionEngine } from "../execution/executionEngine.js";
 import { workflowAgent } from "../workflow/workflowAgent.js";
 import { saveAuditLog } from "../audit/auditLogger.js";
@@ -68,9 +67,6 @@ export async function contextFusion(event) {
     });
 
     const decision = await decisionAgent(fusedContext);
-    if (decision.decision === "HUMAN_REVIEW") {
-        const approved = await waitForApproval(decision);
-    }
 
     console.log("\n========== DECISION ==========\n");
 
@@ -84,31 +80,19 @@ export async function contextFusion(event) {
         decision.actions.forEach(action => console.log(`• ${action}`));
     }
 
-    if(decision.requiresHumanApproval){
-        const status = await waitForApproval(decision);
-
-        if(status==="REJECTED"){
-            console.log("Human rejected the request");
-            console.log("Workflow terminated");
-
-            return;
-        }
-        console.log("human approved the request");
-    }
-
     console.log("\n========== EXECUTION ==========\n");
 
-    await executionEngine(decision , fusedContext);
+    await executionEngine(decision, fusedContext);
     await saveAuditLog({
-        event:normalizedEvent,
+        event: normalizedEvent,
         fusedContext,
         decision,
         executionPlan: decision.executionPlan || []
     });
 
-    await workflowAgent(decision,fusedContext);
+    await workflowAgent(decision, fusedContext);
 
     console.log("\n====================================\n");
-    
+
 
 }
