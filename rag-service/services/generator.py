@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from google import genai
 from services.retriever import retrieve
+from services.reranker import rerank
 
 load_dotenv()
 client = genai.Client(
@@ -9,7 +10,13 @@ client = genai.Client(
 )
 
 def ask_rag(question):
-    retrieved_chunks = retrieve(question)
+    retrieved_chunks = retrieve(question , k=10)
+    
+    retrieved_chunks = rerank(
+        question, 
+        retrieved_chunks,
+        top_k=3
+    )
     
     context=""
     

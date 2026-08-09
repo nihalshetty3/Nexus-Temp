@@ -1,0 +1,20 @@
+{
+    "nihal": [
+        {
+            "role": "user",
+            "message": "Why was my desktop request rejected?"
+        },
+        {
+            "role": "assistant",
+            "message": "Your desktop request was rejected because duplicate purchase requests were detected and the requested quantity did not match the quotation."
+        },
+        {
+            "role": "user",
+            "message": "Who was the vendor?"
+        },
+        {
+            "role": "assistant",
+            "message": "The vendor was BenQ India Pvt Ltd."
+        }
+    ]
+}
